@@ -1,0 +1,3 @@
+C:/Users/sofup/CLionProjects/TestProject/cmake-build-debug/CMakeFiles/TestProject.dir
+C:/Users/sofup/CLionProjects/TestProject/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/sofup/CLionProjects/TestProject/cmake-build-debug/CMakeFiles/rebuild_cache.dir
