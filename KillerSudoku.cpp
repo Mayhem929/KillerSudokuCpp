@@ -16,9 +16,10 @@ public:
      * @param areas_sum
      */
 
-    KillerSudoku(vector<vector<int>> areas, vector<int> areas_sum){
+    KillerSudoku(int first, vector<vector<int>> areas, vector<int> areas_sum){
         this->areas = move(areas);
         this->areas_sum = move(areas_sum);
+        this->first = first;
     }
 
     void printSudoku(){
@@ -106,7 +107,7 @@ public:
         return true;
     }
 
-    bool solveSudokuFW(int i, int j)
+    bool solveSudoku(int i, int j)
     {
         static int count = 0;
 
@@ -114,37 +115,15 @@ public:
             cout << endl << "Combinations tried: " << count << endl;
             return true;
         }
-        if(j==9) return solveSudokuFW(i + 1, 0);
-        if(board[i][j] != 0) return solveSudokuFW(i, j + 1);
+        if(j==9) return solveSudoku(i + 1, 0);
+        if(board[i][j] != 0) return solveSudoku(i, j + 1);
 
-        for (int val = 1; val < 10; ++val) {
+        for (int iter = 0; iter < 9; ++iter) {
+            int val = (first+iter)%9+1;
             if (check(i, j, val)) {
                 board[i][j] = val;
                 if(++count%10000000 == 0) printSudoku();
-                if (solveSudokuFW(i, j + 1)) return true;
-                board[i][j] = 0;
-            };
-        };
-
-        return false;
-    }
-
-    bool solveSudokuBW(int i, int j)
-    {
-        static int count = 0;
-
-        if(i==9) {
-            cout << endl << "Combinations tried: " << count << endl;
-            return true;
-        }
-        if(j==9) return solveSudokuBW(i + 1, 0);
-        if(board[i][j] != 0) return solveSudokuBW(i, j + 1);
-
-        for (int val = 9; val > 0; --val) {
-            if (check(i, j, val)) {
-                board[i][j] = val;
-                if(++count%10000000 == 0) printSudoku();
-                if (solveSudokuBW(i, j + 1)) return true;
+                if (solveSudoku(i, j + 1)) return true;
                 board[i][j] = 0;
             };
         };
@@ -154,7 +133,7 @@ public:
 
 private:
 
-
+    int first;
     vector<vector<int>> areas;
     vector<int> areas_sum;
     vector<vector<int>> board = {{0,0,0,0,0,0,0,0,0},
@@ -170,18 +149,13 @@ private:
 
 class thread_obj {
 public:
-    void operator()(bool forward, vector<vector<int>> areas, vector<int> areas_sum)
+    void operator()(int first, vector<vector<int>> areas, vector<int> areas_sum)
     {
         auto start = high_resolution_clock::now();
 
-        KillerSudoku sudoku(std::move(areas), std::move(areas_sum));
+        KillerSudoku sudoku(first, std::move(areas), std::move(areas_sum));
 
-        if(forward){
-            sudoku.solveSudokuFW(0,0);
-        }
-        else{
-            sudoku.solveSudokuBW(0,0);
-        }
+        sudoku.solveSudoku(0, 0);
 
         cout << endl << endl;
         cout << "Solved Sudoku:" << endl;
@@ -229,6 +203,14 @@ int main() {
 
     thread th1(thread_obj(), 0, areas, areas_sum);
     thread th2(thread_obj(), 1, areas, areas_sum);
+    thread th3(thread_obj(), 2, areas, areas_sum);
+    thread th4(thread_obj(), 3, areas, areas_sum);
+    thread th5(thread_obj(), 4, areas, areas_sum);
+    thread th6(thread_obj(), 5, areas, areas_sum);
+    thread th7(thread_obj(), 6, areas, areas_sum);
+    thread th8(thread_obj(), 7, areas, areas_sum);
+    thread th9(thread_obj(), 8, areas, areas_sum);
+
 
     th1.join();
 
